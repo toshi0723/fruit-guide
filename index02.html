@@ -1,0 +1,986 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>台灣水果栽培指南</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600;700&family=Noto+Sans+TC:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #faf8f3;
+  --bg2: #f2ede2;
+  --text: #1a1a16;
+  --text2: #5a5a4a;
+  --text3: #9a9a8a;
+  --border: rgba(0,0,0,0.1);
+  --card: #fff;
+  --accent-guava: #2d7a45;
+  --accent-lychee: #c0392b;
+  --accent-pineapple: #d4890a;
+  --accent-wax: #1a6b8a;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Noto Sans TC', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+}
+
+header {
+  background: var(--text);
+  color: var(--bg);
+  padding: 3rem 2rem 2.5rem;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+header::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    45deg,
+    transparent,
+    transparent 40px,
+    rgba(255,255,255,0.02) 40px,
+    rgba(255,255,255,0.02) 80px
+  );
+}
+header h1 {
+  font-family: 'Noto Serif TC', serif;
+  font-size: clamp(1.8rem, 5vw, 3rem);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  position: relative;
+}
+header p {
+  font-size: 1.1rem;
+  color: rgba(255,255,255,0.55);
+  margin-top: 0.6rem;
+  letter-spacing: 0.1em;
+  position: relative;
+}
+
+nav {
+  display: flex;
+  justify-content: center;
+  gap: 0;
+  background: var(--text);
+  border-top: 1px solid rgba(255,255,255,0.1);
+  overflow-x: auto;
+}
+.nav-btn {
+  padding: 1.1rem 1.8rem;
+  font-family: 'Noto Sans TC', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: rgba(255,255,255,0.5);
+  background: none;
+  border: none;
+  cursor: pointer;
+  letter-spacing: 0.05em;
+  border-bottom: 3px solid transparent;
+  transition: all 0.2s;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.nav-btn:hover { color: rgba(255,255,255,0.9); }
+.nav-btn.active { color: #fff; }
+.nav-btn[data-fruit="guava"].active   { border-bottom-color: var(--accent-guava); }
+.nav-btn[data-fruit="lychee"].active  { border-bottom-color: var(--accent-lychee); }
+.nav-btn[data-fruit="pineapple"].active { border-bottom-color: var(--accent-pineapple); }
+.nav-btn[data-fruit="wax"].active     { border-bottom-color: var(--accent-wax); }
+.nav-icon { font-size: 22px; }
+
+.fruit-section { display: none; padding: 2rem 1rem 3rem; max-width: 960px; margin: 0 auto; }
+.fruit-section.active { display: block; }
+
+.fruit-hero {
+  display: flex;
+  align-items: flex-start;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  background: var(--card);
+  border-radius: 12px;
+  border: 1px solid var(--border);
+}
+.fruit-badge {
+  width: 80px; height: 80px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 38px;
+  flex-shrink: 0;
+}
+.fruit-hero h2 {
+  font-family: 'Noto Serif TC', serif;
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 0.4rem;
+}
+.fruit-hero p {
+  font-size: 1.1rem;
+  color: var(--text2);
+  line-height: 1.8;
+}
+.meta-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 0.8rem; }
+.meta-tag {
+  font-size: 0.95rem;
+  padding: 5px 14px;
+  border-radius: 20px;
+  background: var(--bg2);
+  color: var(--text2);
+  font-weight: 500;
+}
+
+.timeline-bar {
+  display: flex;
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 1.5rem;
+  height: 10px;
+  cursor: pointer;
+}
+.bar-seg { height: 100%; transition: opacity 0.2s; flex: 1; }
+.bar-seg:hover { opacity: 0.75; }
+
+.phase-scroll { overflow-x: auto; margin-bottom: 1.5rem; padding-bottom: 4px; }
+
+.phase-group-label {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text3);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+  padding: 4px 10px;
+  border-radius: 6px;
+  background: var(--bg2);
+  display: inline-block;
+}
+.phase-group { margin-bottom: 1.2rem; }
+.phase-group-row {
+  display: flex;
+  gap: 0;
+  min-width: max-content;
+  position: relative;
+}
+.phase-group-row::before {
+  content: '';
+  position: absolute;
+  top: 32px; left: 32px; right: 32px;
+  height: 2px;
+  background: var(--border);
+  z-index: 0;
+}
+.phase-row {
+  display: flex;
+  gap: 0;
+  min-width: max-content;
+  position: relative;
+}
+.phase-row::before {
+  content: '';
+  position: absolute;
+  top: 32px; left: 32px; right: 32px;
+  height: 2px;
+  background: var(--border);
+  z-index: 0;
+}
+.phase {
+  display: flex; flex-direction: column; align-items: center;
+  min-width: 110px;
+  padding: 0 6px;
+  cursor: pointer;
+  position: relative;
+  z-index: 1;
+}
+.phase-dot {
+  width: 64px; height: 64px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 26px;
+  border: 2.5px solid transparent;
+  transition: transform 0.18s, border-color 0.18s;
+  margin-bottom: 8px;
+  background: var(--bg2);
+}
+.phase:hover .phase-dot { transform: scale(1.08); }
+.phase.active .phase-dot { border-color: currentColor; }
+.phase-label { font-size: 0.95rem; font-weight: 500; text-align: center; color: var(--text); }
+.phase-time { font-size: 0.82rem; color: var(--text3); text-align: center; margin-top: 3px; }
+
+.detail-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.6rem;
+  display: none;
+  flex-direction: column;
+  gap: 1.2rem;
+  animation: fadeIn 0.2s ease;
+}
+.detail-card.visible { display: flex; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+
+.detail-header { display: flex; align-items: center; gap: 12px; }
+.detail-icon { font-size: 28px; }
+.detail-title { font-family: 'Noto Serif TC', serif; font-size: 1.3rem; font-weight: 600; }
+.detail-desc { font-size: 1.05rem; color: var(--text2); line-height: 1.85; }
+
+.section-title {
+  font-size: 0.88rem; font-weight: 500; color: var(--text3);
+  text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 9px;
+}
+.pill-grid { display: flex; flex-wrap: wrap; gap: 9px; }
+.pill {
+  font-size: 0.95rem; font-weight: 500;
+  padding: 6px 14px; border-radius: 20px; line-height: 1.5;
+}
+.p-green  { background: #e8f5e0; color: #2d6a1e; }
+.p-amber  { background: #fdf0d8; color: #7a4d0a; }
+.p-blue   { background: #e3f0fc; color: #1456a0; }
+.p-red    { background: #fde8e8; color: #962020; }
+.p-teal   { background: #dff5ee; color: #0d6650; }
+.p-purple { background: #eeebfd; color: #4a3caa; }
+.p-coral  { background: #fde9e3; color: #8c3018; }
+
+.section-card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:1.6rem; margin-top:2rem; }
+.section-card-title { font-family:'Noto Serif TC',serif; font-size:1.3rem; font-weight:600; margin-bottom:1.2rem; display:flex; align-items:center; gap:10px; }
+.risk-table { width:100%; border-collapse:collapse; font-size:0.95rem; }
+.risk-table th { background:var(--bg2); padding:10px 12px; text-align:left; font-weight:500; font-size:0.88rem; color:var(--text2); border-bottom:1px solid var(--border); }
+.risk-table td { padding:10px 12px; border-bottom:1px solid var(--border); vertical-align:top; line-height:1.6; font-size:0.95rem; }
+.risk-table tr:last-child td { border-bottom:none; }
+.risk-table tr:hover td { background:var(--bg); }
+.risk-badge { display:inline-block; padding:3px 10px; border-radius:20px; font-size:0.82rem; font-weight:500; white-space:nowrap; }
+.risk-low { background:#dff5ee; color:#0d6650; }
+.risk-mid { background:#fdf0d8; color:#7a4d0a; }
+.risk-high { background:#fde8e8; color:#962020; }
+.quality-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:14px; }
+.quality-item { background:var(--bg); border:1px solid var(--border); border-radius:10px; padding:1rem; }
+.quality-item-label { font-size:0.82rem; font-weight:500; color:var(--text3); text-transform:uppercase; letter-spacing:0.06em; margin-bottom:6px; }
+.quality-item-value { font-size:1.1rem; font-weight:500; color:var(--text); margin-bottom:4px; }
+.quality-item-note { font-size:0.85rem; color:var(--text2); line-height:1.5; }
+.quality-pass { border-left:4px solid #2d7a45; }
+.quality-warn { border-left:4px solid #d4890a; }
+.quality-fail { border-left:4px solid #c0392b; }
+
+footer {
+  text-align: center;
+  padding: 2rem;
+  font-size: 0.9rem;
+  color: var(--text3);
+  border-top: 1px solid var(--border);
+  margin-top: 1rem;
+}
+
+@media (max-width: 600px) {
+  header { padding: 2rem 1rem 1.5rem; }
+  .fruit-hero { flex-direction: column; gap: 1rem; }
+  .nav-btn { padding: 0.9rem 1rem; font-size: 0.95rem; }
+  .phase { min-width: 95px; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>台灣水果栽培指南</h1>
+  <p>種植 · 病蟲害防治 · 施肥管理 · 農藥風險 · 採收驗收</p>
+</header>
+
+<nav>
+  <button class="nav-btn active" data-fruit="guava" onclick="switchFruit('guava')">
+    <span class="nav-icon">🍈</span> 芭樂
+  </button>
+  <button class="nav-btn" data-fruit="lychee" onclick="switchFruit('lychee')">
+    <span class="nav-icon">🍒</span> 玉荷苞
+  </button>
+  <button class="nav-btn" data-fruit="pineapple" onclick="switchFruit('pineapple')">
+    <span class="nav-icon">🍍</span> 鳳梨
+  </button>
+  <button class="nav-btn" data-fruit="wax" onclick="switchFruit('wax')">
+    <span class="nav-icon">🍑</span> 蓮霧
+  </button>
+</nav>
+
+<!-- ===== 芭樂 ===== -->
+<section class="fruit-section active" id="sec-guava">
+  <div class="fruit-hero">
+    <div class="fruit-badge" style="background:#e8f5e0; color:var(--accent-guava)">🍈</div>
+    <div>
+      <h2 style="color:var(--accent-guava)">芭樂</h2>
+      <p>番石榴（Psidium guajava），台灣最普及的熱帶水果之一，珍珠芭樂、帝王芭樂為主要品種。定植後約 9–12 個月首次採收，全年皆可生產。</p>
+      <div class="meta-tags">
+        <span class="meta-tag">主產區：彰化、南投、高雄</span>
+        <span class="meta-tag">採收期：全年</span>
+        <span class="meta-tag">定植至首採：9–12 個月</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="timeline-bar" id="bar-guava"></div>
+  <div id="phase-groups-guava"></div>
+  <div id="details-guava"></div>
+  <div id="risk-guava"></div>
+  <div id="quality-guava"></div>
+</section>
+
+<!-- ===== 玉荷苞 ===== -->
+<section class="fruit-section" id="sec-lychee">
+  <div class="fruit-hero">
+    <div class="fruit-badge" style="background:#fde8e8; color:var(--accent-lychee)">🍒</div>
+    <div>
+      <h2 style="color:var(--accent-lychee)">玉荷苞荔枝</h2>
+      <p>台灣最具代表性的荔枝品種，盛產於高雄、屏東。果大、皮紅、龜裂紋明顯，甜度高，產期短（約 2–3 週），採後需冷鏈保鮮。</p>
+      <div class="meta-tags">
+        <span class="meta-tag">主產區：高雄、屏東</span>
+        <span class="meta-tag">採收期：5月下旬–6月上旬</span>
+        <span class="meta-tag">定植至首採：3–5 年</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="timeline-bar" id="bar-lychee"></div>
+  <div id="phase-groups-lychee"></div>
+  <div id="details-lychee"></div>
+  <div id="risk-lychee"></div>
+  <div id="quality-lychee"></div>
+</section>
+
+<!-- ===== 鳳梨 ===== -->
+<section class="fruit-section" id="sec-pineapple">
+  <div class="fruit-hero">
+    <div class="fruit-badge" style="background:#fdf0d8; color:var(--accent-pineapple)">🍍</div>
+    <div>
+      <h2 style="color:var(--accent-pineapple)">鳳梨</h2>
+      <p>台灣鳳梨（Ananas comosus），以台農 17 號「金鑽」、台農 20 號「牛奶鳳梨」等為主要品種。無子多汁、甜酸適中，為台灣重要外銷水果。</p>
+      <div class="meta-tags">
+        <span class="meta-tag">主產區：屏東、嘉義、台南</span>
+        <span class="meta-tag">採收期：3–8 月（依品種）</span>
+        <span class="meta-tag">定植至首採：16–18 個月</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="timeline-bar" id="bar-pineapple"></div>
+  <div id="phase-groups-pineapple"></div>
+  <div id="details-pineapple"></div>
+  <div id="risk-pineapple"></div>
+  <div id="quality-pineapple"></div>
+</section>
+
+<!-- ===== 蓮霧 ===== -->
+<section class="fruit-section" id="sec-wax">
+  <div class="fruit-hero">
+    <div class="fruit-badge" style="background:#e3f0fc; color:var(--accent-wax)">🍑</div>
+    <div>
+      <h2 style="color:var(--accent-wax)">蓮霧（黑珍珠）</h2>
+      <p>台灣蓮霧（Syzygium samarangense），以屏東「黑珍珠」為最具代表性品種。果皮深紅近黑、果肉晶瑩剔透、清甜多汁無澀味，冬季為主要產期，為台灣高經濟價值精品水果。</p>
+      <div class="meta-tags">
+        <span class="meta-tag">主產區：屏東林邊、佳冬</span>
+        <span class="meta-tag">採收期：11月–翌年2月</span>
+        <span class="meta-tag">定植至首採：2–3 年</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="timeline-bar" id="bar-wax"></div>
+  <div id="phase-groups-wax"></div>
+  <div id="details-wax"></div>
+  <div id="risk-wax"></div>
+  <div id="quality-wax"></div>
+</section>
+
+<footer>
+  台灣水果栽培指南 · 資料僅供學習參考 · 實際用藥請依農藥標示及農業部農業試驗所建議執行
+</footer>
+
+<script>
+const DATA = {
+  guava: {
+    color: '#2d7a45',
+    note: '芭樂生長快，定植後約 9–12 個月即可首次採收，之後全年多次開花結果，是少數新種當年就能收穫的果樹。',
+    groups: [
+      { label: '⏳ 建樹期（僅第一次，約 9–12 個月）', barColor: '#9FE1CB', phases: [
+        { icon:'🌱', label:'育苗', time:'0–2 個月' },
+        { icon:'🪴', label:'定植', time:'第 2–3 月' },
+        { icon:'🌿', label:'營養生長', time:'第 3–6 月' },
+      ]},
+      { label: '🔁 每年生產週期（年年重複）', barColor: '#EF9F27', phases: [
+        { icon:'🌸', label:'開花期', time:'第 6–8 月' },
+        { icon:'🍈', label:'果實發育', time:'第 8–11 月' },
+        { icon:'✂️', label:'採收', time:'第 11–12 月' },
+      ]},
+    ],
+    details: [
+      {
+        icon:'🌱', title:'育苗期（0–2 個月）',
+        desc:'播種或嫁接繁殖，維持溫濕度促進發芽，種子於 25–30°C 約 2–4 週發芽。避免土壤過濕導致猝倒病。',
+        fert:['低濃度氮磷鉀複合肥','腐熟有機堆肥（基肥）'],
+        fertClass:['p-green','p-teal'],
+        pest:['猝倒病 → 福多寧水懸劑','根腐病預防 → 土壤消毒'],
+        pestClass:['p-red','p-amber'],
+      },
+      {
+        icon:'🪴', title:'定植期（第 2–3 個月）',
+        desc:'幼苗移至田間定植，植距約 3×3 m，定植後灌足定根水。注意苗期受地下害蟲危害。',
+        fert:['雞糞有機肥（基肥）','磷酸二氫鉀促根','緩效性複合肥'],
+        fertClass:['p-green','p-teal','p-blue'],
+        pest:['地下害蟲 → 大滅松粒劑','蚜蟲 → 賽速安水溶粉劑','銹病預防 → 三泰福噴施'],
+        pestClass:['p-red','p-amber','p-coral'],
+      },
+      {
+        icon:'🌿', title:'營養生長期（第 3–6 個月）',
+        desc:'枝葉快速生長，進行整枝修剪，保持通風透光。此期是炭疽病、介殼蟲等高發期，需密切監測。',
+        fert:['高氮複合肥（促葉）','腐植酸液肥（促根）','每月追肥 1–2 次','硼鋅鎂微量元素葉噴'],
+        fertClass:['p-green','p-teal','p-blue','p-amber'],
+        pest:['炭疽病 → 得克利可濕粉劑','介殼蟲 → 撲滅松乳劑','薊馬 → 賽速安','芽蟲防治 → 布芬淨'],
+        pestClass:['p-red','p-red','p-amber','p-coral'],
+      },
+      {
+        icon:'🌸', title:'開花期（第 6–8 個月）',
+        desc:'花期約 2 個月，芭樂為自花授粉，通風良好與昆蟲授粉可提高著果率。避免此時施用廣效性殺蟲劑影響授粉昆蟲。',
+        fert:['磷鉀肥為主（促花芽分化）','硼肥葉面噴施（提高著果率）','減少氮肥避免徒長'],
+        fertClass:['p-green','p-amber','p-teal'],
+        pest:['花腐病 → 賽普護汰寧','東方果實蠅誘殺（甲基丁香油）','避免廣效殺蟲劑傷蜂'],
+        pestClass:['p-red','p-amber','p-purple'],
+      },
+      {
+        icon:'🍈', title:'果實發育期（第 8–11 個月）',
+        desc:'套袋是台灣芭樂栽培重要技術，可防病蟲害及機械損傷，改善果實外觀。果實膨大期需充足水分與鉀肥。',
+        fert:['高鉀肥（促進果實膨大）','鈣肥噴施（預防裂果）','有機液肥灌根（提升品質）','控制氮肥避免果皮粗糙'],
+        fertClass:['p-green','p-amber','p-teal','p-blue'],
+        pest:['東方果實蠅 → 套袋保護','炭疽病 → 克熱淨懸浮劑','薊馬 → 移克滅乳劑','介殼蟲 → 布芬淨'],
+        pestClass:['p-red','p-red','p-amber','p-coral'],
+      },
+      {
+        icon:'✂️', title:'採收期（第 11–12 個月）',
+        desc:'定植後約 9–12 個月可初採，果皮由深綠轉淡綠，觸感稍軟即可採收。注意農藥安全採收期（最後一次施藥至採收的天數）。',
+        fert:['採後立即施基肥恢復樹勢','有機質肥料補充地力'],
+        fertClass:['p-green','p-teal'],
+        pest:['確認農藥安全採收期已過','東方果實蠅監測至採收','避免雨後立即採收（裂果）'],
+        pestClass:['p-red','p-purple','p-amber'],
+      },
+    ]
+  },
+
+  lychee: {
+    color: '#c0392b',
+    note: '玉荷苞是多年生果樹，新苗種下後需 3–5 年才能首次結果。但一旦樹體成熟，往後每年都會在固定產季（5–6月）開花結果，農民看到的「每年收穫」是成熟老樹的表現。',
+    groups: [
+      { label: '⏳ 建樹期（僅第一次，約 3–5 年）', barColor: '#9FE1CB', phases: [
+        { icon:'🌱', label:'種植定植', time:'第 1–6 月' },
+        { icon:'🌿', label:'營養生長', time:'第 6 月–3 年' },
+      ]},
+      { label: '🔁 每年生產週期（年年重複）', barColor: '#EF9F27', phases: [
+        { icon:'🍂', label:'花芽分化', time:'11–12 月' },
+        { icon:'🌸', label:'開花授粉', time:'1–3 月' },
+        { icon:'🫐', label:'幼果發育', time:'3–4 月' },
+        { icon:'🍒', label:'果實膨大', time:'4–5 月' },
+        { icon:'🧺', label:'採收', time:'5–6 月' },
+      ]},
+    ],
+    details: [
+      {
+        icon:'🌱', title:'種植定植期（定植後第 1–6 個月）',
+        desc:'玉荷苞多以嫁接苗定植，植距 6×7 m 或 5×6 m。定植後遮陰緩苗，幼樹根系未穩，需注意水分與病害管理。台灣南部（高雄、屏東）春季定植為宜。',
+        fert:['腐熟豬糞堆肥（基肥）','磷酸二氫鉀促根','低濃度氮磷鉀複合肥少量多次'],
+        fertClass:['p-green','p-teal','p-blue'],
+        pest:['根腐病 → 土壤消毒 + 福多寧灌根','地下害蟲 → 大滅松粒劑','蚜蟲 → 賽速安水溶粉劑'],
+        pestClass:['p-red','p-amber','p-coral'],
+      },
+      {
+        icon:'🌿', title:'營養生長期（第 6 個月–結果前）',
+        desc:'荔枝多次抽梢，每次新梢抽發後施一次肥。整枝修剪保持樹形開展，增加光照與通風。此期以培養健壯枝梢為目標，為日後開花結果打基礎。',
+        fert:['高氮複合肥（促梢）','腐植酸液肥（促根壯樹）','每次新梢萌發前追肥','鎂鋅硼微量元素葉噴'],
+        fertClass:['p-green','p-teal','p-blue','p-amber'],
+        pest:['荔枝椿象 → 賽洛寧乳劑','炭疽病 → 得克利可濕粉劑','介殼蟲 → 撲滅松乳劑','葉蟬 → 布芬淨乳劑'],
+        pestClass:['p-red','p-red','p-amber','p-coral'],
+      },
+      {
+        icon:'🍂', title:'花芽分化期（11–12 月）',
+        desc:'玉荷苞需經低溫（15°C 以下）刺激才能順利花芽分化。此期需控氮、控水，讓枝梢「老熟」停止生長。若末梢太嫩，可環刻或斷根促熟。',
+        fert:['停施氮肥，補充磷鉀肥','鉀肥促枝梢老熟','硼肥葉噴（促花芽分化）'],
+        fertClass:['p-amber','p-teal','p-blue'],
+        pest:['荔枝癭蟎 → 畢芬寧乳劑','蚜蟲 → 賽速安（低劑量）','炭疽病預防 → 免得爛可濕粉劑'],
+        pestClass:['p-red','p-amber','p-coral'],
+      },
+      {
+        icon:'🌸', title:'開花授粉期（1–3 月）',
+        desc:'玉荷苞為雌雄異花同株，花序由頂芽伸出，花期約 20–30 天。花期需依賴蜜蜂等昆蟲授粉，避免噴施廣效殺蟲劑。',
+        fert:['磷鉀肥為主（促花發育）','硼酸葉噴（提高著果率）','避免施用氮肥（防落花）'],
+        fertClass:['p-amber','p-teal','p-blue'],
+        pest:['荔枝椿象 → 花期前完成防治','蚜蟲 → 花期改人工摘除','花期禁用廣效殺蟲劑（保護蜜蜂）','霜霉病（多雨）→ 亞托敏懸浮劑'],
+        pestClass:['p-red','p-amber','p-purple','p-coral'],
+      },
+      {
+        icon:'🫐', title:'幼果發育期（3–4 月）',
+        desc:'謝花後幼果迅速膨大，此期落果率高（生理落果），需補充養分穩果。荔枝椿象、荔枝蒂蛀蟲是此期最主要害蟲，直接危害幼果造成落果。',
+        fert:['均衡氮磷鉀複合肥','鈣肥噴施（防裂果）','有機液肥灌根（穩果）'],
+        fertClass:['p-green','p-teal','p-amber'],
+        pest:['荔枝椿象 → 賽洛寧 + 陶斯松','荔枝蒂蛀蟲 → 賽滅寧乳劑','薊馬 → 移克滅乳劑','炭疽病 → 克熱淨懸浮劑'],
+        pestClass:['p-red','p-red','p-amber','p-coral'],
+      },
+      {
+        icon:'🍒', title:'果實膨大著色期（4–5 月）',
+        desc:'果實快速膨大，外皮由綠轉紅。玉荷苞果皮龜裂紋為其特徵，充足鉀肥有助果色鮮紅。此期高溫多雨易誘發炭疽病。採收前 14 天起停止施藥。',
+        fert:['高鉀肥（促果色與甜度）','鈣硼噴施（防裂果）','採前 3 週停施氮肥'],
+        fertClass:['p-green','p-teal','p-blue'],
+        pest:['荔枝蒂蛀蟲 → 賽滅寧（注意採收期）','炭疽病 → 賽普護汰寧懸浮劑','果實蠅 → 誘殺（甲基丁香油）','採收前 14 天嚴格停藥'],
+        pestClass:['p-red','p-red','p-amber','p-purple'],
+      },
+      {
+        icon:'🧺', title:'採收期（5–6 月）',
+        desc:'玉荷苞盛產期約在 5 月下旬至 6 月上旬。果皮轉為鮮紅、龜裂紋明顯即可採收。採收後極易失水褐化，需冷鏈保鮮。採後立即回復樹勢管理。',
+        fert:['採後立即施有機質堆肥（恢復樹勢）','高氮複合肥促夏梢萌發','微量元素補充（鎂、鋅）'],
+        fertClass:['p-green','p-teal','p-blue'],
+        pest:['確認各農藥安全採收期已過','早晨低溫時採收（保鮮）','採後修剪結果枝為下年備耕','冷藏 1–5°C 延長保鮮期'],
+        pestClass:['p-red','p-amber','p-coral','p-purple'],
+      },
+    ]
+  },
+
+  pineapple: {
+    color: '#d4890a',
+    note: '鳳梨每株從定植到首次採收約需 16–18 個月。但採收後保留吸芽繼續種植，下一株吸芽只需 12–14 個月即可再次採收，因此農場整體看起來像是「每年都在收」。',
+    groups: [
+      { label: '⏳ 建樹期（首次種植，約 16–18 個月）', barColor: '#9FE1CB', phases: [
+        { icon:'🌱', label:'種植定植', time:'第 1–2 月' },
+        { icon:'🌿', label:'營養生長', time:'第 2–10 月' },
+      ]},
+      { label: '🔁 每輪生產週期（吸芽延續）', barColor: '#EF9F27', phases: [
+        { icon:'🌸', label:'催花處理', time:'第 10–12 月' },
+        { icon:'🍍', label:'花序發育', time:'第 12–14 月' },
+        { icon:'🟡', label:'果實膨大', time:'第 14–16 月' },
+        { icon:'✂️', label:'採收', time:'第 16–18 月' },
+      ]},
+    ],
+    details: [
+      {
+        icon:'🌱', title:'種植定植期（第 1–2 個月）',
+        desc:'鳳梨以吸芽、冠芽或裔芽繁殖，定植前需老化處理（晾乾傷口）。株距 25–30 cm，行距 50–60 cm，採雙行植。定植深度約 5–8 cm，避免心葉埋入土中。',
+        fert:['腐熟有機堆肥（基肥）','緩效性複合肥（底肥）','定植後灌溉磷肥促根'],
+        fertClass:['p-green','p-blue','p-teal'],
+        pest:['介殼蟲（粉介殼蟲）→ 定植前芽苗浸藥','線蟲 → 土壤薰蒸消毒','根腐病預防 → 避免積水'],
+        pestClass:['p-red','p-amber','p-coral'],
+      },
+      {
+        icon:'🌿', title:'營養生長期（第 2–10 個月）',
+        desc:'鳳梨葉片為主要光合器官，需保持葉片健康翠綠。此期施肥以氮肥為主，促進葉片數量與大小。葉腋施肥（灌心施肥）效率最高。',
+        fert:['氮肥為主（硫酸銨、尿素）','每月灌心施肥 1 次','鉀肥輔助（提高抗病性）','鐵、鋅微量元素葉噴（防黃化）'],
+        fertClass:['p-green','p-blue','p-teal','p-amber'],
+        pest:['鳳梨粉介殼蟲 → 撲滅松乳劑','心腐病（細菌）→ 鏈黴素灌心','葉斑病 → 賽普護汰寧噴施','薊馬 → 賽速安'],
+        pestClass:['p-red','p-red','p-amber','p-coral'],
+      },
+      {
+        icon:'🌸', title:'催花處理（第 10–12 個月）',
+        desc:'台灣鳳梨多以乙烯（乙炔水、電石水）或乙烯利（催熟劑）人工催花，在夜間低溫時灌心處理，可精準控制產期。催花後 45–60 天可見花序。',
+        fert:['催花前補充磷鉀肥','硼肥（促進花芽整齊）','停施氮肥（避免影響催花效果）'],
+        fertClass:['p-amber','p-blue','p-teal'],
+        pest:['心腐病預防 → 催花前噴藥保護','粉介殼蟲監測','花薊馬 → 賽速安低濃度'],
+        pestClass:['p-coral','p-amber','p-red'],
+      },
+      {
+        icon:'🍍', title:'花序發育期（第 12–14 個月）',
+        desc:'鳳梨花序由多達 100–200 朵小花組成，由基部向頂端依序開放，每天開花數朵，花期約 20 天。此期需保持充足水分，並注意蟲害防治。',
+        fert:['均衡氮磷鉀肥（維持樹勢）','鈣肥噴施（強化果眼發育）','避免大量氮肥（防空洞果）'],
+        fertClass:['p-green','p-teal','p-blue'],
+        pest:['鳳梨粉介殼蟲（傳播萎凋病）→ 撲滅松','蛞蝓、蝸牛 → 四聚乙醛粒劑','花腐病（多雨）→ 亞托敏'],
+        pestClass:['p-red','p-amber','p-coral'],
+      },
+      {
+        icon:'🟡', title:'果實膨大期（第 14–16 個月）',
+        desc:'謝花後果實迅速膨大，此期是決定果重與糖度的關鍵。充足鉀肥提升糖度，鈣肥防止裂果。套袋可防曬傷，套報紙袋或PE袋均可。',
+        fert:['高鉀肥（提升甜度）','鈣硼噴施（防裂果、增重）','控氮避免過度生長'],
+        fertClass:['p-green','p-teal','p-blue'],
+        pest:['鳳梨粉介殼蟲持續監測','果腐病 → 克熱淨懸浮劑','薊馬 → 移克滅（採前注意安全期）'],
+        pestClass:['p-red','p-amber','p-coral'],
+      },
+      {
+        icon:'✂️', title:'採收期（第 16–18 個月）',
+        desc:'果皮由綠轉黃（1/3 以上轉色）、果香明顯時即可採收。早晨採收，帶 1–2 片葉片保護果頂。冷藏 10–13°C 可保鮮 2–3 週。採後種植吸芽繼續下一輪生產。',
+        fert:['採後施有機肥促進吸芽生長','留取優良吸芽繼續種植'],
+        fertClass:['p-green','p-teal'],
+        pest:['確認農藥安全採收期','採後園區清潔防殘株病蟲害','吸芽定植前老化處理'],
+        pestClass:['p-red','p-amber','p-coral'],
+      },
+    ]
+  },
+
+  wax: {
+    color: '#1a6b8a',
+    note: '蓮霧是多年生果樹，新苗種下需 2–3 年才能首次結果。成熟後每年以「催花控水」技術人工控制產期，台灣主要集中在冬季（11月至翌年2月）採收，此為每年重複的生產週期。',
+    groups: [
+      { label: '⏳ 建樹期（僅第一次，約 2–3 年）', barColor: '#9FE1CB', phases: [
+        { icon:'🌱', label:'種植定植', time:'第 1–6 月' },
+        { icon:'🌿', label:'營養生長', time:'第 6 月–2 年' },
+      ]},
+      { label: '🔁 每年生產週期（年年重複）', barColor: '#EF9F27', phases: [
+        { icon:'🍂', label:'催花控水', time:'8–10 月' },
+        { icon:'🌸', label:'開花期', time:'9–11 月' },
+        { icon:'🫐', label:'果實發育', time:'10–12 月' },
+        { icon:'🍑', label:'採收', time:'11月–翌年2月' },
+      ]},
+    ],
+    details: [
+      {
+        icon:'🌱', title:'種植定植期（第 1–6 個月）',
+        desc:'蓮霧以嫁接苗或空中壓條繁殖，植距 6×6 m 或 5×5 m。台灣以屏東林邊、佳冬為主要產區，砂質壤土排水良好為佳。定植後需遮光緩苗。',
+        fert:['腐熟有機堆肥（基肥）','磷酸二氫鉀促根','緩效性複合肥（少量）'],
+        fertClass:['p-green','p-teal','p-blue'],
+        pest:['根腐病 → 土壤消毒 + 福多寧','蚜蟲 → 賽速安水溶粉劑','地下害蟲 → 大滅松粒劑'],
+        pestClass:['p-red','p-amber','p-coral'],
+      },
+      {
+        icon:'🌿', title:'營養生長期（第 6–24 個月）',
+        desc:'蓮霧生長旺盛，需多次整枝修剪維持樹形。控制樹高在 2–3 m 以內，便於套袋與採收。每次新梢萌發後施肥，培養充實枝條作為結果母枝。',
+        fert:['高氮複合肥（促梢）','腐植酸液肥（強根）','每次萌梢後追肥','硼鎂鋅微量元素補充'],
+        fertClass:['p-green','p-teal','p-blue','p-amber'],
+        pest:['蓮霧果實蠅 → 誘殺裝置','炭疽病 → 得克利可濕粉劑','介殼蟲 → 撲滅松乳劑','木蝨 → 布芬淨乳劑'],
+        pestClass:['p-red','p-red','p-amber','p-coral'],
+      },
+      {
+        icon:'🍂', title:'催花控水期（8–10 月）',
+        desc:'蓮霧催花為台灣最具技術性的果樹管理之一。主要方法：控水乾旱法（斷水 20–30 天）、環刻、敷膜提溫。屏東農民常以塑膠膜覆蓋根部提高土溫促進花芽分化。',
+        fert:['停施氮肥（控制徒長）','補充磷鉀肥（促花芽）','硼肥噴施（催花前）'],
+        fertClass:['p-amber','p-teal','p-blue'],
+        pest:['炭疽病預防 → 免得爛可濕粉劑','蚜蟲 → 賽速安','螨類（乾旱期易爆發）→ 畢芬寧'],
+        pestClass:['p-coral','p-amber','p-red'],
+      },
+      {
+        icon:'🌸', title:'開花期（9–11 月）',
+        desc:'蓮霧花為白色穗狀，具濃郁香氣，以昆蟲授粉為主。花期需充足水分，恢復正常灌水。此期不可施殺蟲劑避免傷害授粉昆蟲，著果後進行疏果套袋。',
+        fert:['磷鉀肥（促花與著果）','硼酸噴施（提高著果率）','恢復正常灌水'],
+        fertClass:['p-amber','p-blue','p-teal'],
+        pest:['花期禁用廣效殺蟲劑','花薊馬 → 賽速安（謹慎低量）','霜霉病（多雨）→ 亞托敏懸浮劑'],
+        pestClass:['p-purple','p-amber','p-coral'],
+      },
+      {
+        icon:'🫐', title:'果實發育期（10–12 月）',
+        desc:'謝花後進行疏果（每穗留 2–4 果），之後套袋保護。套袋用紙袋或泡棉袋，可防果實蠅、炭疽病及改善果色。充足鉀肥提升甜度與果重。',
+        fert:['高鉀肥（促果實膨大與甜度）','鈣肥噴施（防裂果）','有機液肥灌根（提升品質）'],
+        fertClass:['p-green','p-teal','p-amber'],
+        pest:['蓮霧果實蠅 → 套袋為主要防治','炭疽病 → 克熱淨懸浮劑（套袋前）','介殼蟲 → 布芬淨（套袋前噴施）'],
+        pestClass:['p-red','p-red','p-amber'],
+      },
+      {
+        icon:'🍑', title:'採收期（11月–翌年2月）',
+        desc:'果皮轉為深紅色（黑金剛品種）、果頂微裂即成熟。早晨採收，去除套袋後分級包裝。蓮霧採後壽命短，需冷藏（10°C）保鮮，盡快銷售。採後重施有機肥恢復樹勢。',
+        fert:['採後立即施腐熟有機肥','高氮複合肥促春梢萌發'],
+        fertClass:['p-green','p-teal'],
+        pest:['確認農藥安全採收期已過','採後修剪整枝（疏除弱枝）','冷藏 10°C 延長保鮮至 2 週'],
+        pestClass:['p-red','p-amber','p-purple'],
+      },
+    ]
+  }
+};
+
+function buildFruit(key) {
+  const d = DATA[key];
+
+  const bar = document.getElementById('bar-' + key);
+  bar.innerHTML = '';
+  let phaseIndex = 0;
+  d.groups.forEach(g => {
+    g.phases.forEach((p, i) => {
+      const seg = document.createElement('div');
+      seg.className = 'bar-seg';
+      seg.style.background = g.barColor;
+      seg.style.opacity = i === 0 ? '1' : '0.7';
+      const idx = phaseIndex + i;
+      seg.onclick = () => selectPhase(key, idx);
+      bar.appendChild(seg);
+    });
+    phaseIndex += g.phases.length;
+  });
+
+  const groupsEl = document.getElementById('phase-groups-' + key);
+  groupsEl.innerHTML = '';
+
+  if (d.note) {
+    const noteDiv = document.createElement('div');
+    noteDiv.style.cssText = 'background:#f0f7ff;border:1px solid #b5d4f4;border-radius:10px;padding:1rem 1.2rem;margin-bottom:1.2rem;font-size:1rem;color:#1456a0;line-height:1.75;';
+    noteDiv.innerHTML = '<strong style="display:block;margin-bottom:4px;font-size:0.88rem;letter-spacing:0.05em;text-transform:uppercase;">💡 為什麼要分兩個階段？</strong>' + d.note;
+    groupsEl.appendChild(noteDiv);
+  }
+
+  phaseIndex = 0;
+  d.groups.forEach((g, gi) => {
+    const groupDiv = document.createElement('div');
+    groupDiv.className = 'phase-group';
+
+    const labelDiv = document.createElement('div');
+    labelDiv.className = 'phase-group-label';
+    labelDiv.style.color = gi === 0 ? '#0d6650' : '#854F0B';
+    labelDiv.style.background = gi === 0 ? '#dff5ee' : '#fdf0d8';
+    labelDiv.textContent = g.label;
+    groupDiv.appendChild(labelDiv);
+
+    const scrollDiv = document.createElement('div');
+    scrollDiv.className = 'phase-scroll';
+
+    const rowDiv = document.createElement('div');
+    rowDiv.className = 'phase-group-row';
+
+    g.phases.forEach((p, i) => {
+      const idx = phaseIndex + i;
+      const div = document.createElement('div');
+      div.className = 'phase' + (idx === 0 ? ' active' : '');
+      div.id = 'ph-' + key + '-' + idx;
+      div.style.color = d.color;
+      div.onclick = () => selectPhase(key, idx);
+      div.innerHTML = `<div class="phase-dot">${p.icon}</div>
+        <div class="phase-label">${p.label}</div>
+        <div class="phase-time">${p.time}</div>`;
+      rowDiv.appendChild(div);
+    });
+
+    scrollDiv.appendChild(rowDiv);
+    groupDiv.appendChild(scrollDiv);
+    groupsEl.appendChild(groupDiv);
+    phaseIndex += g.phases.length;
+  });
+
+  const detailsEl = document.getElementById('details-' + key);
+  detailsEl.innerHTML = '';
+  d.details.forEach((det, i) => {
+    const card = document.createElement('div');
+    card.className = 'detail-card' + (i === 0 ? ' visible' : '');
+    card.id = 'det-' + key + '-' + i;
+
+    const fertPills = det.fert.map((f, j) =>
+      `<span class="pill ${det.fertClass[j]}">${f}</span>`).join('');
+    const pestPills = det.pest.map((p, j) =>
+      `<span class="pill ${det.pestClass[j]}">${p}</span>`).join('');
+
+    card.innerHTML = `
+      <div class="detail-header">
+        <span class="detail-icon">${det.icon}</span>
+        <span class="detail-title">${det.title}</span>
+      </div>
+      <p class="detail-desc">${det.desc}</p>
+      <div>
+        <div class="section-title">🌾 肥料管理</div>
+        <div class="pill-grid">${fertPills}</div>
+      </div>
+      <div>
+        <div class="section-title">🛡️ 病蟲害防治</div>
+        <div class="pill-grid">${pestPills}</div>
+      </div>`;
+    detailsEl.appendChild(card);
+  });
+}
+
+const currentPhase = {};
+
+function selectPhase(key, i) {
+  const prev = currentPhase[key] || 0;
+  document.getElementById('det-' + key + '-' + prev).classList.remove('visible');
+  document.getElementById('ph-' + key + '-' + prev).classList.remove('active');
+  currentPhase[key] = i;
+  document.getElementById('det-' + key + '-' + i).classList.add('visible');
+  document.getElementById('ph-' + key + '-' + i).classList.add('active');
+}
+
+function switchFruit(key) {
+  document.querySelectorAll('.fruit-section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('sec-' + key).classList.add('active');
+  document.querySelector('[data-fruit="' + key + '"]').classList.add('active');
+}
+
+const RISK_DATA = {
+  guava: [
+    { name:'福多寧水懸劑', use:'猝倒病、根腐病', preharvest:'7 天',毒性:'低毒', risk:'low', note:'幼苗期使用，避免高濃度沖根' },
+    { name:'賽速安水溶粉劑', use:'蚜蟲、薊馬', preharvest:'7 天', 毒性:'低毒', risk:'low', note:'避免花期施用，影響授粉蜂' },
+    { name:'撲滅松乳劑', use:'介殼蟲', preharvest:'14 天', 毒性:'中毒', risk:'mid', note:'需穿戴防護，避免皮膚接觸' },
+    { name:'得克利可濕粉劑', use:'炭疽病', preharvest:'7 天', 毒性:'低毒', risk:'low', note:'連續使用需輪替避免抗藥性' },
+    { name:'克熱淨懸浮劑', use:'炭疽病（果期）', preharvest:'7 天', 毒性:'低毒', risk:'low', note:'套袋前噴施效果佳' },
+    { name:'移克滅乳劑', use:'薊馬（果期）', preharvest:'14 天', 毒性:'中毒', risk:'mid', note:'採收前 14 天嚴格停藥' },
+    { name:'甲基丁香油（誘殺）', use:'東方果實蠅', preharvest:'無限制', 毒性:'無毒（誘劑）', risk:'low', note:'誘殺裝置，不直接接觸果實' },
+  ],
+  lychee: [
+    { name:'賽洛寧乳劑', use:'荔枝椿象', preharvest:'14 天', 毒性:'中毒', risk:'mid', note:'花期禁用，對蜜蜂高毒' },
+    { name:'陶斯松乳劑', use:'椿象（幼果期）', preharvest:'21 天', 毒性:'中毒', risk:'high', note:'需嚴格管制，採前21天停藥' },
+    { name:'賽滅寧乳劑', use:'荔枝蒂蛀蟲', preharvest:'14 天', 毒性:'中毒', risk:'mid', note:'採收前嚴格遵守安全採收期' },
+    { name:'畢芬寧乳劑', use:'荔枝癭蟎', preharvest:'7 天', 毒性:'低毒', risk:'low', note:'花芽分化期使用' },
+    { name:'亞托敏懸浮劑', use:'霜霉病', preharvest:'7 天', 毒性:'低毒', risk:'low', note:'雨季預防性使用' },
+    { name:'克熱淨懸浮劑', use:'炭疽病', preharvest:'7 天', 毒性:'低毒', risk:'low', note:'果實發育期重點防治' },
+    { name:'撲滅松乳劑', use:'介殼蟲', preharvest:'14 天', 毒性:'中毒', risk:'mid', note:'穿戴防護，避免直接吸入' },
+  ],
+  pineapple: [
+    { name:'撲滅松乳劑', use:'粉介殼蟲', preharvest:'14 天', 毒性:'中毒', risk:'mid', note:'防治媒介昆蟲傳播萎凋病' },
+    { name:'鏈黴素（農用）', use:'心腐病（細菌）', preharvest:'7 天', 毒性:'低毒', risk:'low', note:'過量使用易產生抗藥性' },
+    { name:'賽普護汰寧', use:'葉斑病', preharvest:'7 天', 毒性:'低毒', risk:'low', note:'連續使用需輪替藥劑' },
+    { name:'賽速安水溶粉劑', use:'薊馬', preharvest:'7 天', 毒性:'低毒', risk:'low', note:'花期謹慎低量使用' },
+    { name:'四聚乙醛粒劑', use:'蛞蝓、蝸牛', preharvest:'7 天', 毒性:'低毒', risk:'low', note:'撒施土面，勿接觸果實' },
+    { name:'亞托敏懸浮劑', use:'花腐病（多雨）', preharvest:'7 天', 毒性:'低毒', risk:'low', note:'多雨季節預防使用' },
+    { name:'克熱淨懸浮劑', use:'果腐病', preharvest:'7 天', 毒性:'低毒', risk:'low', note:'果實膨大期注意採收期' },
+  ],
+  wax: [
+    { name:'福多寧水懸劑', use:'根腐病', preharvest:'7 天', 毒性:'低毒', risk:'low', note:'定植期土壤消毒使用' },
+    { name:'賽速安水溶粉劑', use:'蚜蟲、花薊馬', preharvest:'7 天', 毒性:'低毒', risk:'low', note:'花期謹慎低量，避免傷蜂' },
+    { name:'畢芬寧乳劑', use:'螨類', preharvest:'7 天', 毒性:'低毒', risk:'low', note:'催花控水期易爆發，需監測' },
+    { name:'得克利可濕粉劑', use:'炭疽病', preharvest:'7 天', 毒性:'低毒', risk:'low', note:'套袋前最後一次施用' },
+    { name:'克熱淨懸浮劑', use:'炭疽病（套袋前）', preharvest:'7 天', 毒性:'低毒', risk:'low', note:'套袋前噴施後即套袋保護' },
+    { name:'亞托敏懸浮劑', use:'霜霉病', preharvest:'7 天', 毒性:'低毒', risk:'low', note:'多雨花期使用' },
+    { name:'布芬淨乳劑', use:'介殼蟲（套袋前）', preharvest:'14 天', 毒性:'中毒', risk:'mid', note:'套袋前施用後即不再接觸果實' },
+  ],
+};
+
+const QUALITY_DATA = {
+  guava: {
+    items: [
+      { label:'果重（特級）', value:'400 g 以上', note:'珍珠芭樂以大果為優，帝王芭樂可達 800 g', cls:'quality-pass' },
+      { label:'果重（一般級）', value:'250–400 g', note:'外銷標準通常要求 300 g 以上', cls:'quality-warn' },
+      { label:'外觀', value:'果皮淡綠、無病斑', note:'無炭疽病黑斑、無機械損傷、無蟲孔', cls:'quality-pass' },
+      { label:'硬度', value:'觸感微硬帶彈性', note:'過硬為未熟，過軟易損傷不利運輸', cls:'quality-pass' },
+      { label:'糖度（Brix）', value:'≥ 9°Brix', note:'珍珠芭樂目標 9–12°，帝王芭樂可達 14°', cls:'quality-pass' },
+      { label:'果形', value:'圓形至梨形端正', note:'畸形果、裂果不符驗收標準', cls:'quality-warn' },
+      { label:'農藥殘留', value:'符合台灣 MRL 標準', note:'東方果實蠅誘殺期間需特別確認無農藥超標', cls:'quality-pass' },
+    ]
+  },
+  lychee: {
+    items: [
+      { label:'直徑（特級）', value:'≥ 38 mm', note:'重量參考：約 28 g 以上；直徑為主要分級依據', cls:'quality-pass' },
+      { label:'直徑（一級）', value:'33–38 mm', note:'重量參考：約 22–28 g；為市場主流規格', cls:'quality-pass' },
+      { label:'直徑（二級）', value:'28–33 mm', note:'重量參考：約 16–22 g；價格較低', cls:'quality-warn' },
+      { label:'直徑（等外品）', value:'< 28 mm', note:'重量低於 16 g，通常列為加工或等外品', cls:'quality-warn' },
+      { label:'果皮色澤', value:'鮮紅色，龜裂紋明顯', note:'色澤均勻，無褐化面積超過 10%', cls:'quality-pass' },
+      { label:'糖度（Brix）', value:'≥ 17°Brix', note:'玉荷苞目標 18–22°，高甜度為其特色', cls:'quality-pass' },
+      { label:'新鮮度', value:'採後 24 小時內冷藏', note:'常溫下 4–8 小時即開始褐化失水', cls:'quality-warn' },
+      { label:'農藥殘留', value:'符合台灣 MRL 標準', note:'陶斯松等高風險農藥需特別抽驗', cls:'quality-pass' },
+    ]
+  },
+  pineapple: {
+    items: [
+      { label:'果重（特級）', value:'1.5 kg 以上', note:'金鑽鳳梨外銷標準通常 1.2 kg 以上', cls:'quality-pass' },
+      { label:'果重（一般級）', value:'1.0–1.5 kg', note:'低於 1 kg 通常為等外品或加工用', cls:'quality-warn' },
+      { label:'果皮轉色', value:'1/3 以上轉黃', note:'全綠採收風味不足，過熟易腐敗', cls:'quality-pass' },
+      { label:'糖度（Brix）', value:'≥ 14°Brix', note:'金鑽鳳梨目標 15–18°，酸甜比亦重要', cls:'quality-pass' },
+      { label:'外觀', value:'果眼飽滿均勻', note:'無空洞果（搖晃有水聲）、無裂果', cls:'quality-pass' },
+      { label:'果香', value:'成熟香氣明顯', note:'採收時底部有濃郁香甜氣味為熟度指標', cls:'quality-pass' },
+      { label:'農藥殘留', value:'符合台灣 MRL 標準', note:'外銷日本需符合更嚴格的殘留標準', cls:'quality-pass' },
+    ]
+  },
+  wax: {
+    items: [
+      { label:'果重（特級）', value:'80 g 以上', note:'黑珍珠頂級品可達 100 g 以上，市場溢價明顯', cls:'quality-pass' },
+      { label:'果重（一般級）', value:'50–80 g', note:'低於 50 g 為等外品，市場價格大幅下降', cls:'quality-warn' },
+      { label:'果皮色澤', value:'深紅近黑（黑珍珠）', note:'色澤均勻深紅，蠟質光澤明顯，無褐化斑點', cls:'quality-pass' },
+      { label:'糖度（Brix）', value:'≥ 10°Brix', note:'黑珍珠目標 11–14°，甜而不澀為品種特色', cls:'quality-pass' },
+      { label:'果形', value:'鐘形端正，果頂微開', note:'果頂裂開約 1–2 mm 為適熟指標', cls:'quality-pass' },
+      { label:'硬度', value:'觸感緊實帶脆感', note:'過軟代表過熟，運輸易損傷；過硬則未熟', cls:'quality-pass' },
+      { label:'農藥殘留', value:'符合台灣 MRL 標準', note:'採後壽命短，需確認採前停藥期已過', cls:'quality-pass' },
+    ]
+  },
+};
+
+const DEFECT_LINKS = {
+  guava: [
+    { label:'裂果', desc:'水分不均或鈣不足造成果皮開裂', url:'https://kmweb.moa.gov.tw/subject/subject.php?id=1201', src:'農業知識入口網・芭樂主題館' },
+    { label:'果實蠅蟲孔', desc:'東方果實蠅產卵，果肉腐爛有蛆', url:'https://kmweb.coa.gov.tw/subject/subject.php?id=11754', src:'農業知識入口網・芭樂病蟲害' },
+    { label:'炭疽病斑', desc:'果皮出現黑褐色圓形凹陷病斑', url:'https://kmweb.coa.gov.tw/subject/subject.php?id=11753', src:'農業知識入口網・芭樂炭疽病' },
+  ],
+  lychee: [
+    { label:'果皮褐化', desc:'採後失水或高溫導致果皮迅速褐化', url:'https://kmweb.moa.gov.tw/subject/index.php?id=74', src:'農業知識入口網・荔枝主題館' },
+    { label:'蒂蛀蟲孔', desc:'荔枝蒂蛀蟲從果蒂鑽入造成落果腐爛', url:'https://kmweb.moa.gov.tw/subject/index.php?id=74', src:'農業知識入口網・荔枝主題館' },
+    { label:'裂果', desc:'果實膨大期水分驟增造成果皮撐裂', url:'https://kmweb.moa.gov.tw/subject/index.php?id=74', src:'農業知識入口網・荔枝主題館' },
+  ],
+  pineapple: [
+    { label:'空洞果', desc:'果實內部中空，搖晃有水聲', url:'https://kmweb.coa.gov.tw/techcd/%E4%BD%9C%E7%89%A9%E7%97%85%E8%9F%B2%E5%AE%B3%E8%88%87%E8%82%A5%E5%9F%B9%E7%AE%A1%E7%90%86%E6%8A%80%E8%A1%93%E8%B3%87%E6%96%99/%E6%9E%9C%E6%A8%B9/%E5%B8%B8%E7%B6%A0%E6%9E%9C%E6%A8%B9/%E9%B3%B3%E6%A2%A8/%E8%9F%B2%E5%AE%B3/%E9%B3%B3%E6%A2%A8-%E7%B2%89%E4%BB%8B%E6%AE%BC%E8%9F%B2.htm', src:'農業知識入口網・鳳梨蟲害' },
+    { label:'心腐病', desc:'果心呈褐色水浸狀，切開才可見', url:'https://kmweb.coa.gov.tw/techcd/%E4%BD%9C%E7%89%A9%E7%97%85%E8%9F%B2%E5%AE%B3%E8%88%87%E8%82%A5%E5%9F%B9%E7%AE%A1%E7%90%86%E6%8A%80%E8%A1%93%E8%B3%87%E6%96%99/%E6%9E%9C%E6%A8%B9/%E5%B8%B8%E7%B6%A0%E6%9E%9C%E6%A8%B9/%E9%B3%B3%E6%A2%A8/%E8%9F%B2%E5%AE%B3/%E9%B3%B3%E6%A2%A8-%E7%B2%89%E4%BB%8B%E6%AE%BC%E8%9F%B2.htm', src:'農業知識入口網・鳳梨病害' },
+    { label:'過熟腐爛', desc:'果皮全黃過頭，果肉發酵腐敗', url:'https://pesticide.aphia.gov.tw/information/Query/Bug', src:'農藥資訊服務網・鳳梨病蟲害' },
+  ],
+  wax: [
+    { label:'裂果', desc:'水分供應不均或鈣不足造成果皮開裂', url:'https://pesticide.aphia.gov.tw/information/Query/Bug', src:'農藥資訊服務網・蓮霧病蟲害' },
+    { label:'果實蠅蟲孔', desc:'蓮霧果實蠅蛀入後，果肉褐化腐敗', url:'https://pesticide.aphia.gov.tw/information/Query/Bug', src:'農藥資訊服務網・蓮霧病蟲害' },
+    { label:'炭疽病斑', desc:'果皮出現黑色凹陷斑點，套袋前最易發生', url:'https://pesticide.aphia.gov.tw/information/Query/Bug', src:'農藥資訊服務網・蓮霧炭疽病' },
+  ],
+};
+
+function buildRiskAndQuality(key) {
+  const risks = RISK_DATA[key];
+  const quality = QUALITY_DATA[key];
+
+  const riskEl = document.getElementById('risk-' + key);
+  const riskRows = risks.map(r => `
+    <tr>
+      <td><strong>${r.name}</strong></td>
+      <td>${r.use}</td>
+      <td><span class="risk-badge risk-${r.risk}">${r.毒性}</span></td>
+      <td>${r.preharvest}</td>
+      <td style="color:var(--text2);font-size:0.88rem">${r.note}</td>
+    </tr>`).join('');
+
+  riskEl.innerHTML = `
+    <div class="section-card">
+      <div class="section-card-title">⚠️ 農藥風險性評估</div>
+      <p style="font-size:0.95rem;color:var(--text2);margin-bottom:1rem;line-height:1.7">
+        以下為本作物常用農藥的毒性等級與安全採收期，採收前務必確認停藥天數已達標準。
+        <strong style="color:#962020">紅色標示</strong>為需特別注意的高風險農藥。
+      </p>
+      <div style="overflow-x:auto">
+        <table class="risk-table">
+          <thead><tr>
+            <th>農藥名稱</th><th>防治對象</th><th>毒性等級</th><th>安全採收期</th><th>注意事項</th>
+          </tr></thead>
+          <tbody>${riskRows}</tbody>
+        </table>
+      </div>
+      <p style="font-size:0.82rem;color:var(--text3);margin-top:1rem">
+        ※ 安全採收期以農藥標示為準，實際使用請查詢農業部農藥資訊服務網（pesticide.baphiq.gov.tw）
+      </p>
+    </div>`;
+
+  const qualityItems = quality.items.map(q => `
+    <div class="quality-item ${q.cls}">
+      <div class="quality-item-label">${q.label}</div>
+      <div class="quality-item-value">${q.value}</div>
+      <div class="quality-item-note">${q.note}</div>
+    </div>`).join('');
+
+  const defectLinks = DEFECT_LINKS[key] || [];
+  const defectCards = defectLinks.map(d => `
+    <div style="background:var(--bg);border:1px solid var(--border);border-left:4px solid #e24b4a;border-radius:10px;padding:1rem 1.1rem;display:flex;flex-direction:column;gap:8px">
+      <div style="font-size:1rem;font-weight:500;color:#962020">${d.label}</div>
+      <div style="font-size:0.88rem;color:var(--text2);line-height:1.6">${d.desc}</div>
+      <a href="${d.url}" target="_blank" rel="noopener"
+         style="display:inline-flex;align-items:center;gap:6px;margin-top:4px;padding:6px 14px;background:#fde8e8;color:#962020;border:1px solid #f09595;border-radius:20px;font-size:0.85rem;font-weight:500;text-decoration:none;width:fit-content;transition:background 0.15s"
+         onmouseover="this.style.background='#f9d0d0'" onmouseout="this.style.background='#fde8e8'">
+        查看參考照片 ↗
+      </a>
+      <div style="font-size:0.78rem;color:var(--text3)">資料來源：${d.src}</div>
+    </div>`).join('');
+
+  document.getElementById('quality-' + key).innerHTML = `
+    <div class="section-card">
+      <div class="section-card-title">✅ 採收驗收標準（品質規格）</div>
+      <p style="font-size:0.95rem;color:var(--text2);margin-bottom:1rem;line-height:1.7">
+        以下為採收時的物理性狀驗收標準。
+        <span style="display:inline-block;padding:2px 8px;border-radius:4px;background:#dff5ee;color:#0d6650;font-size:0.82rem;font-weight:500">綠框</span> 合格　
+        <span style="display:inline-block;padding:2px 8px;border-radius:4px;background:#fdf0d8;color:#7a4d0a;font-size:0.82rem;font-weight:500">橘框</span> 注意　
+        <span style="display:inline-block;padding:2px 8px;border-radius:4px;background:#fde8e8;color:#962020;font-size:0.82rem;font-weight:500">紅框</span> 不合格
+      </p>
+      <div class="quality-grid">${qualityItems}</div>
+      <div style="margin-top:1.6rem;border-top:1px solid var(--border);padding-top:1.4rem">
+        <div style="font-size:1rem;font-weight:500;color:#962020;margin-bottom:1rem">🚫 常見不合格缺陷・官方參考照片</div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px">
+          ${defectCards}
+        </div>
+        <p style="font-size:0.8rem;color:var(--text3);margin-top:1rem">※ 點擊「查看參考照片」將開啟農業部官方網頁，照片與說明均由農改場提供</p>
+      </div>
+    </div>`;
+}
+
+['guava','lychee','pineapple','wax'].forEach(buildFruit);
+['guava','lychee','pineapple','wax'].forEach(buildRiskAndQuality);
+</script>
+</body>
+</html>
